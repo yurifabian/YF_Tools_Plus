@@ -38,7 +38,7 @@ Descarga el plugin:
 
 Descarga el archivo YF_Tools_Plus.zip
 
-[IMAGEN: Captura de pantalla del botón de descarga del plugin]
+<img width="1807" height="1170" alt="image" src="https://github.com/user-attachments/assets/48ff6332-bbd1-413e-bbfd-b75c7b5bac7c" />
 
 Localiza el directorio de plugins de QGIS:
 
@@ -51,16 +51,12 @@ Instala el plugin:
 Descomprime el archivo ZIP en el directorio de plugins
 Esto creará una carpeta llamada YF_Tools_Plus
 
-[IMAGEN: Captura de pantalla de la carpeta del plugin en el directorio de plugins]
-
 Activa el plugin en QGIS:
 
 Abre QGIS
 Ve a Complementos → Administrar e Instalar Complementos...
 Busca "YF Tools Plus"
 Marca la casilla para activarlo
-
-[IMAGEN: Captura de pantalla del administrador de complementos de QGIS con el plugin activado]
 
 🚀 Uso
 Exportación Rápida a Excel (Un Clic)
@@ -69,7 +65,8 @@ Selecciona la capa vectorial que deseas exportar
 Haz clic en el botón "Exportar a Excel (Un Clic)" en la barra de herramientas
 El archivo se guardará automáticamente en tu carpeta de usuario y se abrirá
 
-[IMAGEN: Captura de pantalla del botón 'Exportar a Excel (Un Clic)' en la barra de herramientas]
+<img width="2907" height="2035" alt="image" src="https://github.com/user-attachments/assets/86466014-784d-443b-a732-b897563d9ef7" />
+
 
 Nota: El botón solo estará habilitado cuando tengas una capa vectorial activa.
 
@@ -78,7 +75,7 @@ Herramientas Completas (Diálogo Principal)
 Haz clic en el botón "YF Tools Plus" en la barra de herramientas
 Se abrirá un diálogo con 4 pestañas:
 
-[IMAGEN: Captura de pantalla del diálogo principal del plugin con las pestañas]
+<img width="1063" height="874" alt="image" src="https://github.com/user-attachments/assets/3e49eddc-78ad-46ae-b9c7-87b118b78e88" />
 
 Pestaña 1: Excel a CSV
 
@@ -86,7 +83,8 @@ Selecciona un archivo Excel (.xlsx o .xls)
 Especifica dónde guardar el archivo CSV
 Haz clic en "Convertir Excel a CSV"
 
-[IMAGEN: Captura de pantalla de la pestaña 'Excel a CSV']
+<img width="1060" height="877" alt="image" src="https://github.com/user-attachments/assets/3fb0f1ef-f7eb-4fe9-8383-5613bca6f673" />
+
 
 Pestaña 2: Crear Polígono
 
