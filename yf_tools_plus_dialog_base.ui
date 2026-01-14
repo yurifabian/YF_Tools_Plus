@@ -1,0 +1,609 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>YF_Tools_PlusDialogBase</class>
+ <widget class="QDialog" name="YF_Tools_PlusDialogBase">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>700</width>
+    <height>550</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>700</width>
+    <height>550</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>YF Tools Plus - Herramientas Topográficas</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>icon.png</normaloff>icon.png</iconset>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QDialog {
+    background-color: #f5f5f5;
+}
+
+QTabWidget::pane {
+    border: 1px solid #c0c0c0;
+    background: white;
+    border-radius: 4px;
+}
+
+QTabWidget::tab-bar {
+    left: 5px;
+}
+
+QTabBar::tab {
+    background: #e0e0e0;
+    border: 1px solid #c0c0c0;
+    border-bottom: none;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    padding: 8px 20px;
+    margin-right: 2px;
+}
+
+QTabBar::tab:selected {
+    background: white;
+    border-bottom: 2px solid #0078d7;
+}
+
+QTabBar::tab:hover {
+    background: #d0d0d0;
+}
+
+QPushButton {
+    background-color: #0078d7;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    font-weight: bold;
+}
+
+QPushButton:hover {
+    background-color: #005a9e;
+}
+
+QPushButton:pressed {
+    background-color: #004578;
+}
+
+QPushButton:disabled {
+    background-color: #cccccc;
+    color: #888888;
+}
+
+QLabel {
+    color: #333333;
+    font-size: 10pt;
+}
+
+QLineEdit {
+    border: 1px solid #c0c0c0;
+    border-radius: 3px;
+    padding: 5px;
+    background: white;
+}
+
+QLineEdit:focus {
+    border: 2px solid #0078d7;
+}
+
+QGroupBox {
+    border: 1px solid #c0c0c0;
+    border-radius: 4px;
+    margin-top: 10px;
+    padding-top: 10px;
+    font-weight: bold;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 10px;
+    padding: 0 5px 0 5px;
+}</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_main">
+   <property name="spacing">
+    <number>10</number>
+   </property>
+   <property name="leftMargin">
+    <number>15</number>
+   </property>
+   <property name="topMargin">
+    <number>15</number>
+   </property>
+   <property name="rightMargin">
+    <number>15</number>
+   </property>
+   <property name="bottomMargin">
+    <number>15</number>
+   </property>
+   <item>
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <property name="tabsClosable">
+      <bool>false</bool>
+     </property>
+     
+     <!-- TAB 1: Excel a CSV -->
+     <widget class="QWidget" name="tab_excel_csv">
+      <attribute name="title">
+       <string>📊 Excel a CSV</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_tab1">
+       <property name="spacing">
+        <number>15</number>
+       </property>
+       <item>
+        <widget class="QGroupBox" name="groupBox_excel_input">
+         <property name="title">
+          <string>Archivo de Entrada</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+           <widget class="QLabel" name="label_excel">
+            <property name="text">
+             <string>Seleccione el archivo Excel (.xlsx, .xls):</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QgsFileWidget" name="mFileWidget_excel_input">
+            <property name="filter">
+             <string>Excel Files (*.xlsx *.xls)</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_csv_output">
+         <property name="title">
+          <string>Archivo de Salida</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_3">
+          <item>
+           <widget class="QLabel" name="label_csv">
+            <property name="text">
+             <string>Guardar como CSV:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QgsFileWidget" name="mFileWidget_csv_output">
+            <property name="filter">
+             <string>CSV Files (*.csv)</string>
+            </property>
+            <property name="storageMode">
+             <enum>QgsFileWidget::SaveFile</enum>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_1">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_convert_csv">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>40</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>🔄 Convertir Excel a CSV</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     
+     <!-- TAB 2: Crear Polígono -->
+     <widget class="QWidget" name="tab_create_polygon">
+      <attribute name="title">
+       <string>📐 Crear Polígono</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_tab2">
+       <property name="spacing">
+        <number>15</number>
+       </property>
+       <item>
+        <widget class="QGroupBox" name="groupBox_csv_input">
+         <property name="title">
+          <string>Archivo CSV con Coordenadas</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_4">
+          <item>
+           <widget class="QLabel" name="label_csv_polygon">
+            <property name="text">
+             <string>Seleccione el archivo CSV:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QgsFileWidget" name="mFileWidget_csv_polygon">
+            <property name="filter">
+             <string>CSV Files (*.csv)</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_coords">
+         <property name="title">
+          <string>Configuración de Coordenadas</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_x">
+            <property name="text">
+             <string>Campo X (Este):</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="lineEdit_x_field">
+            <property name="text">
+             <string>ESTE</string>
+            </property>
+            <property name="placeholderText">
+             <string>Nombre del campo X</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_y">
+            <property name="text">
+             <string>Campo Y (Norte):</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="lineEdit_y_field">
+            <property name="text">
+             <string>NORTE</string>
+            </property>
+            <property name="placeholderText">
+             <string>Nombre del campo Y</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_crs">
+            <property name="text">
+             <string>Sistema de Coordenadas:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QgsProjectionSelectionWidget" name="mCrsSelector_polygon"/>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_create_polygon">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>40</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>✏️ Crear Polígono</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     
+     <!-- TAB 3: Segmentador -->
+     <widget class="QWidget" name="tab_segmentator">
+      <attribute name="title">
+       <string>✂️ Segmentador</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_tab3">
+       <property name="spacing">
+        <number>15</number>
+       </property>
+       <item>
+        <widget class="QGroupBox" name="groupBox_segment">
+         <property name="title">
+          <string>Capa de Polígono a Segmentar</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_5">
+          <item>
+           <widget class="QLabel" name="label_layer_polygon">
+            <property name="text">
+             <string>Seleccione la capa de polígono:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QgsMapLayerComboBox" name="mLayerComboBox_polygon">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>30</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_info">
+            <property name="text">
+             <string>ℹ️ Esta herramienta creará dos capas nuevas:
+• Segmentos: Líneas con longitud y azimut
+• Vértices: Puntos con coordenadas y ángulos</string>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QLabel {
+    background-color: #e3f2fd;
+    border: 1px solid #90caf9;
+    border-radius: 4px;
+    padding: 10px;
+    color: #1976d2;
+}</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_3">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_segment_polygon">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>40</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>⚡ Segmentar Polígono</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     
+     <!-- TAB 4: Exportar a Excel -->
+     <widget class="QWidget" name="tab_export">
+      <attribute name="title">
+       <string>📤 Exportar a Excel</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_tab4">
+       <property name="spacing">
+        <number>15</number>
+       </property>
+       <item>
+        <widget class="QGroupBox" name="groupBox_export">
+         <property name="title">
+          <string>Selección de Capa</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_6">
+          <item>
+           <widget class="QLabel" name="label_layer_export">
+            <property name="text">
+             <string>Seleccione la capa a exportar:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QgsMapLayerComboBox" name="mLayerComboBox_export">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>30</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_export_options">
+         <property name="title">
+          <string>Opciones de Exportación</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_7">
+          <item>
+           <widget class="QLabel" name="label_excel_output">
+            <property name="text">
+             <string>Guardar como (opcional, por defecto: carpeta de usuario):</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QgsFileWidget" name="mFileWidget_excel_output">
+            <property name="filter">
+             <string>Excel Files (*.xlsx)</string>
+            </property>
+            <property name="storageMode">
+             <enum>QgsFileWidget::SaveFile</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="checkBox_auto_open">
+            <property name="text">
+             <string>🔓 Abrir archivo automáticamente después de exportar</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_4">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_export_excel">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>40</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>📊 Exportar a Excel</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   
+   <!-- Botones inferiores -->
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_bottom">
+     <property name="spacing">
+      <number>10</number>
+     </property>
+     <item>
+      <widget class="QPushButton" name="pushButton_refresh_layers">
+       <property name="minimumSize">
+        <size>
+         <width>150</width>
+         <height>35</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>🔄 Actualizar Capas</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+    background-color: #4caf50;
+}
+QPushButton:hover {
+    background-color: #45a049;
+}</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_save_config">
+       <property name="minimumSize">
+        <size>
+         <width>180</width>
+         <height>35</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>💾 Guardar Configuración</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+    background-color: #ff9800;
+}
+QPushButton:hover {
+    background-color: #f57c00;
+}</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QgsFileWidget</class>
+   <extends>QWidget</extends>
+   <header>qgsfilewidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>QgsMapLayerComboBox</class>
+   <extends>QComboBox</extends>
+   <header>qgsmaplayercombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>QgsProjectionSelectionWidget</class>
+   <extends>QWidget</extends>
+   <header>qgsprojectionselectionwidget.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

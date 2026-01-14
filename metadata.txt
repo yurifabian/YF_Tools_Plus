@@ -1,0 +1,19 @@
+[general]
+name=YF Tools Plus
+qgisMinimumVersion=3.30
+description=Plugin unificado que combina las funcionalidades de YF_Tools y Export to Excel (Un Clic) en una sola herramienta completa para trabajos topográficos y de georeferenciación.
+version=2.0
+author=Yuri Caller
+email=yuricaller@gmail.com
+icon=icon.png
+category=Vector
+homepage=https://github.com/yurifabian/YF_Tools_Plus
+tracker=https://github.com/yurifabian/YF_Tools_Plus/issues
+repository=https://github.com/yurifabian/YF_Tools_Plus
+tags=export, excel, csv, polygon, segment, tools, topografia
+license=GPL2+
+changelog=v2.0 (2025-04-21): Fusión de YF_Tools y Export to Excel. Interfaz unificada con pestañas. Exportación rápida a Excel con un clic. Cálculo de ángulos internos y externos en segmentador. Mejoras en la gestión de capas. Guardado de configuración persistente.
+[experimental]
+experimental=false
+[deprecated]
+deprecated=false
