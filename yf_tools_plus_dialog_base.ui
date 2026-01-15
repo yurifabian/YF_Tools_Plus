@@ -84,15 +84,26 @@ QLabel {
     font-size: 10pt;
 }
 
-QLineEdit {
+QLineEdit, QComboBox {
     border: 1px solid #c0c0c0;
     border-radius: 3px;
     padding: 5px;
     background: white;
 }
 
-QLineEdit:focus {
+QLineEdit:focus, QComboBox:focus {
     border: 2px solid #0078d7;
+}
+
+QComboBox::drop-down {
+    border: none;
+    width: 20px;
+}
+
+QComboBox::down-arrow {
+    image: url(:/images/themes/default/mActionArrowDown.svg);
+    width: 12px;
+    height: 12px;
 }
 
 QGroupBox {
@@ -267,13 +278,18 @@ QGroupBox::title {
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QLineEdit" name="lineEdit_x_field">
-            <property name="text">
-             <string>ESTE</string>
+           <widget class="QComboBox" name="comboBox_x_field">
+            <property name="editable">
+             <bool>true</bool>
             </property>
-            <property name="placeholderText">
-             <string>Nombre del campo X</string>
+            <property name="toolTip">
+             <string>Seleccione o escriba el nombre del campo X (Este)</string>
             </property>
+            <item>
+             <property name="text">
+              <string>ESTE</string>
+             </property>
+            </item>
            </widget>
           </item>
           <item row="1" column="0">
@@ -284,13 +300,18 @@ QGroupBox::title {
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QLineEdit" name="lineEdit_y_field">
-            <property name="text">
-             <string>NORTE</string>
+           <widget class="QComboBox" name="comboBox_y_field">
+            <property name="editable">
+             <bool>true</bool>
             </property>
-            <property name="placeholderText">
-             <string>Nombre del campo Y</string>
+            <property name="toolTip">
+             <string>Seleccione o escriba el nombre del campo Y (Norte)</string>
             </property>
+            <item>
+             <property name="text">
+              <string>NORTE</string>
+             </property>
+            </item>
            </widget>
           </item>
           <item row="2" column="0">
@@ -304,6 +325,27 @@ QGroupBox::title {
            <widget class="QgsProjectionSelectionWidget" name="mCrsSelector_polygon"/>
           </item>
          </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_help_polygon">
+         <property name="text">
+          <string>💡 Los campos se detectan automáticamente al seleccionar un CSV</string>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QLabel {
+    background-color: #fff3cd;
+    border: 1px solid #ffc107;
+    border-radius: 4px;
+    padding: 8px;
+    color: #856404;
+    font-style: italic;
+    font-size: 9pt;
+}</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
         </widget>
        </item>
        <item>
@@ -481,7 +523,7 @@ QGroupBox::title {
           <item>
            <widget class="QCheckBox" name="checkBox_auto_open">
             <property name="text">
-             <string>🔓 Abrir archivo automáticamente después de exportar</string>
+             <string>📂 Abrir archivo automáticamente después de exportar</string>
             </property>
             <property name="checked">
              <bool>true</bool>

@@ -1,233 +1,91 @@
-YF Tools Plus para QGIS 3.30+
-Plugin unificado que combina las funcionalidades de YF_Tools y Export to Excel (Un Clic) en una sola herramienta completa para trabajos topográficos y de georeferenciación.
+# YF Tools Plus para QGIS 3.30+
 
-🎯 Características
-1. Exportar a Excel (Un Clic)
+[![QGIS](https://img.shields.io/badge/QGIS-3.30+-green.svg)](https://qgis.org/)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
-Exporta la tabla de atributos de cualquier capa vectorial activa a Excel (.xlsx)
-Con un solo clic desde la barra de herramientas
-Abre automáticamente el archivo generado
-No requiere configuración adicional
+**YF Tools Plus** es un plugin unificado para QGIS que combina las funcionalidades de *YF_Tools* y *Export to Excel (Un Clic)* en una sola herramienta integral diseñada para optimizar flujos de trabajo topográficos y de georeferenciación.
 
-2. Convertir Excel a CSV
+---
 
-Transforma archivos Excel en formato CSV para su uso en QGIS
-Soporta formatos .xlsx y .xls
-Codificación UTF-8 por defecto
+## 🎯 Características Principales
 
-3. Crear Polígonos desde Coordenadas
+El plugin se organiza en una interfaz intuitiva con pestañas y accesos rápidos desde la barra de herramientas:
 
-Genera polígonos a partir de coordenadas almacenadas en archivos CSV
-Calcula automáticamente área y perímetro
-Configuración personalizable de estilos y etiquetas
-Soporta diferentes sistemas de coordenadas (CRS)
+### 1. Exportación Rápida a Excel (Un Clic)
+- Exporta la tabla de atributos de cualquier capa vectorial activa a formato Excel (`.xlsx`).
+- Ejecución inmediata desde la barra de herramientas.
+- Apertura automática del archivo generado para revisión instantánea.
 
-4. Segmentador de Polígonos
+### 2. Conversión de Excel a CSV
+- Transforma archivos Excel (`.xlsx`, `.xls`) a formato CSV compatible con QGIS.
+- Codificación UTF-8 garantizada para evitar problemas con caracteres especiales.
 
-Divide polígonos en segmentos y vértices individuales
-Calcula longitudes y azimuts de cada segmento
-Calcula ángulos internos y externos en cada vértice
-Reorganiza vértices comenzando desde el norte
-Genera dos capas nuevas: una de líneas (segmentos) y otra de puntos (vértices)
-Etiquetas automáticas con información detallada
+### 3. Generación de Polígonos desde Coordenadas
+- Crea polígonos a partir de listados de coordenadas en archivos CSV.
+- Cálculo automático de **Área** (en hectáreas) y **Perímetro** (en metros).
+- Soporte para múltiples sistemas de coordenadas (CRS).
+- Configuración personalizable de estilos y etiquetado automático.
 
-📦 Instalación
-Instalación Manual
+### 4. Segmentador Avanzado de Polígonos
+- Divide polígonos en segmentos y vértices individuales.
+- **Cálculos detallados:** Longitudes, azimuts (respecto al norte verdadero), ángulos internos y externos.
+- **Orden Inteligente:** Reorganiza los vértices comenzando desde el punto más al norte.
+- **Salida Estructurada:** Genera capas independientes de líneas (segmentos) y puntos (vértices) con atributos completos.
 
-Descarga el plugin:
+---
 
-Descarga el archivo YF_Tools_Plus.zip
+## 📦 Instalación
 
-<img width="1807" height="1170" alt="image" src="https://github.com/user-attachments/assets/48ff6332-bbd1-413e-bbfd-b75c7b5bac7c" />
+### Instalación Manual
+1. Descarga el repositorio como un archivo ZIP.
+2. Localiza el directorio de plugins de QGIS en tu sistema:
+   - **Windows:** `%AppData%\QGIS\QGIS3\profiles\default\python\plugins`
+   - **Linux/macOS:** `~/.local/share/QGIS/QGIS3/profiles/default/python/plugins`
+3. Descomprime el contenido en una carpeta llamada `YF_Tools_Plus`.
+4. Abre QGIS y activa el plugin desde el menú `Complementos` -> `Administrar e instalar complementos`.
 
-Localiza el directorio de plugins de QGIS:
+---
 
-Windows: C:\Users\<tu_usuario>\AppData\Roaming\QGIS\QGIS3\profiles\default\python\plugins
-macOS: ~/.local/share/QGIS/QGIS3/profiles/default/python/plugins
-Linux: ~/.local/share/QGIS/QGIS3/profiles/default/python\plugins
+## 🚀 Guía de Uso
 
-Instala el plugin:
+### Herramientas en la Barra de Herramientas
+- **Icono de Exportación:** Exporta la capa seleccionada a Excel inmediatamente.
+- **Icono Principal:** Abre el panel de herramientas completo.
 
-Descomprime el archivo ZIP en el directorio de plugins
-Esto creará una carpeta llamada YF_Tools_Plus
+### Panel de Herramientas (4 Pestañas)
+1. **Excel a CSV:** Selección de archivo origen y destino para conversión.
+2. **Crear Polígono:** Configuración de columnas X/Y, CRS y estilos.
+3. **Segmentador:** Selección de capa de polígono y ejecución del proceso de división.
+4. **Exportar a Excel:** Opciones avanzadas de exportación con selección de ruta y apertura automática.
 
-Activa el plugin en QGIS:
+---
 
-Abre QGIS
-Ve a Complementos → Administrar e Instalar Complementos...
-Busca "YF Tools Plus"
-Marca la casilla para activarlo
+## 📊 Estructura de Datos de Salida
 
-🚀 Uso
-Exportación Rápida a Excel (Un Clic)
+| Capa | Atributos Generados |
+| :--- | :--- |
+| **Polígonos** | ID, ÁREA (ha), PERÍMETRO (m) |
+| **Segmentos** | ID, Longitud, Azimut (0-360°) |
+| **Vértices** | ID, Lado (V-n a V-m), Este, Norte, Distancia, Azimut, Ángulo Interno, Ángulo Externo |
 
-Selecciona la capa vectorial que deseas exportar
-Haz clic en el botón "Exportar a Excel (Un Clic)" en la barra de herramientas
-El archivo se guardará automáticamente en tu carpeta de usuario y se abrirá
+---
 
-<img width="2907" height="2035" alt="image" src="https://github.com/user-attachments/assets/86466014-784d-443b-a732-b897563d9ef7" />
+## ⚙️ Requisitos y Dependencias
+- **QGIS 3.30** o superior.
+- **Python 3.9+** (incluido en QGIS).
+- Librerías: `PyQt5`, `pandas`, `qgis.core`.
 
+---
 
-Nota: El botón solo estará habilitado cuando tengas una capa vectorial activa.
+## 👤 Autor
+**Yuri Caller**
+- 📧 Email: [yuricaller@gmail.com](mailto:yuricaller@gmail.com)
+- 💻 GitHub: [@yuricaller](https://github.com/yuricaller)
 
-Herramientas Completas (Diálogo Principal)
+---
 
-Haz clic en el botón "YF Tools Plus" en la barra de herramientas
-Se abrirá un diálogo con 4 pestañas:
+## 📄 Licencia
+Este proyecto está bajo la **Licencia Pública General GNU v3.0 (GPL-3.0)**. Consulta el archivo [LICENSE](LICENSE) para más detalles.
 
-<img width="1063" height="874" alt="image" src="https://github.com/user-attachments/assets/3e49eddc-78ad-46ae-b9c7-87b118b78e88" />
-
-Pestaña 1: Excel a CSV
-
-Selecciona un archivo Excel (.xlsx o .xls)
-Especifica dónde guardar el archivo CSV
-Haz clic en "Convertir Excel a CSV"
-
-<img width="1060" height="877" alt="image" src="https://github.com/user-attachments/assets/3fb0f1ef-f7eb-4fe9-8383-5613bca6f673" />
-
-
-Pestaña 2: Crear Polígono
-
-Selecciona un archivo CSV con coordenadas
-Configura los campos de coordenadas X e Y (por defecto: ESTE, NORTE)
-Especifica el sistema de coordenadas (por defecto: EPSG:32719)
-Personaliza el estilo del polígono y las etiquetas
-Haz clic en "Crear Polígono"
-
-[IMAGEN: Captura de pantalla de la pestaña 'Crear Polígono']
-
-Pestaña 3: Segmentador
-
-Selecciona una capa de polígono existente del menú desplegable
-Usa el botón "Actualizar" si acabas de crear una nueva capa
-Haz clic en "Segmentar Polígono"
-Se crearán dos nuevas capas:
-
-Segmentos: Líneas con longitud y azimut
-Vértices: Puntos con coordenadas, ángulos internos y externos
-
-[IMAGEN: Captura de pantalla de la pestaña 'Segmentador' y las capas resultantes]
-
-Pestaña 4: Exportar a Excel
-
-Selecciona la capa vectorial que deseas exportar
-Opcionalmente, especifica una ubicación personalizada para el archivo
-Haz clic en "Exportar a Excel"
-Elige si deseas abrir el archivo automáticamente
-
-[IMAGEN: Captura de pantalla de la pestaña 'Exportar a Excel']
-
-Guardar Configuración
-
-Configura tus preferencias en el diálogo
-Haz clic en "Guardar Configuración" en la parte inferior
-La próxima vez que abras el plugin, se cargarán estos valores automáticamente
-
-[IMAGEN: Captura de pantalla del botón 'Guardar Configuración']
-
-🔧 Configuración
-El plugin guarda automáticamente:
-
-Últimas rutas de archivos utilizadas
-Campos de coordenadas preferidos
-Sistema de coordenadas predeterminado
-Estilos de polígonos y etiquetas
-
-La configuración se almacena en: YF_Tools_Plus/config.json
-📊 Datos de Salida
-Capa de Polígonos
-
-ID: Identificador del polígono
-AREA: Área en hectáreas
-PERIMETRO: Perímetro en metros
-
-Capa de Segmentos
-
-ID: Identificador del segmento
-longitud: Longitud en metros
-azimut: Azimut respecto al norte (0-360°)
-
-Capa de Vértices
-
-ID: Identificador del vértice
-LADO: Descripción del segmento (V-n a V-m)
-Este: Coordenada X
-Norte: Coordenada Y
-Distancia: Longitud del segmento que inicia en este vértice
-Azimut: Azimut del segmento que inicia en este vértice
-ang_int: Ángulo interno en este vértice
-ang_extr: Ángulo externo en este vértice
-
-⚙️ Requisitos
-
-QGIS 3.30 o superior
-Dependencias:
-
-PyQt5 (incluida con QGIS)
-pandas (para conversión Excel a CSV)
-
-**Instalación de pandas:**
-
-Si `pandas` no está disponible en tu entorno QGIS, puedes instalarlo usando el OSGeo4W Shell (en Windows) o el terminal (Linux/macOS) con pip:
-
-```bash
-pip install pandas
-```
-
-[IMAGEN: Captura de pantalla de la instalación de pandas en el terminal/OSGeo4W Shell]
-
-🐛 Solución de Problemas
-El botón de exportación rápida está deshabilitado
-
-Asegúrate de tener una capa vectorial seleccionada en el panel de capas
-
-Error al convertir Excel
-
-Verifica que el archivo Excel existe y no está corrupto
-Asegúrate de tener permisos de lectura
-
-Error al crear polígono
-
-Verifica que el CSV contiene las columnas especificadas
-Asegúrate de tener al menos 3 puntos válidos
-Verifica que las coordenadas son numéricas
-
-Error al segmentar
-
-Asegúrate de que la capa es de tipo polígono
-Verifica que el polígono tiene una geometría válida
-Usa el botón "Actualizar" si la capa no aparece en la lista
-
-📝 Notas Adicionales
-
-Los archivos Excel exportados se guardan por defecto en la carpeta de usuario
-La segmentación comienza desde el vértice más al norte del polígono
-Los azimuts se calculan respecto al norte verdadero
-Los ángulos internos y externos se calculan automáticamente en cada vértice
-
-👤 Autor
-Yuri Caller
-
-Email: yuricaller@gmail.com
-GitHub: @yurifabian
-
-📄 Licencia
-Este programa es software libre; puedes redistribuirlo y/o modificarlo bajo los términos de la Licencia Pública General GNU versión 2 o posterior. Consulta el archivo `LICENSE` para más detalles.
-
-🤝 Contribuciones
-¿Encontraste un bug o tienes una sugerencia?
-
-Reporta problemas en: GitHub Issues
-Contribuye con pull requests
-
-📚 Historial de Versiones
-v2.0 (2025-04-21)
-
-Fusión de YF_Tools y Export to Excel
-Interfaz unificada con pestañas
-Exportación rápida a Excel con un clic
-Cálculo de ángulos internos y externos en segmentador
-Mejoras en la gestión de capas
-Guardado de configuración persistente
-
-¿Te gusta este plugin? ⭐ Dale una estrella en GitHub y compártelo con tus colegas!
+---
+*¿Te resulta útil este plugin? ¡Dale una ⭐ en GitHub!*

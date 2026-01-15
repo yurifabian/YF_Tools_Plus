@@ -7,11 +7,10 @@ author=Yuri Caller
 email=yuricaller@gmail.com
 icon=icon.png
 category=Vector
-homepage=https://github.com/yurifabian/YF_Tools_Plus
-tracker=https://github.com/yurifabian/YF_Tools_Plus/issues
-repository=https://github.com/yurifabian/YF_Tools_Plus
+homepage=https://github.com/yuricaller/YF_Tools_Plus
+tracker=https://github.com/yuricaller/YF_Tools_Plus/issues
+repository=https://github.com/yuricaller/YF_Tools_Plus
 tags=export, excel, csv, polygon, segment, tools, topografia
-license=GPL2+
 changelog=v2.0 (2025-04-21): Fusión de YF_Tools y Export to Excel. Interfaz unificada con pestañas. Exportación rápida a Excel con un clic. Cálculo de ángulos internos y externos en segmentador. Mejoras en la gestión de capas. Guardado de configuración persistente.
 [experimental]
 experimental=false
