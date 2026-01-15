@@ -6,7 +6,7 @@ about=YF Tools Plus es un complemento de topografía que permite crear polígono
 version=2.0
 author=Yuri Caller
 email=yuricaller@gmail.com
-changelog=v2.0 (2025-01-15): Fusión de YF_Tools y Export to Excel. Interfaz unificada con pestañas. Exportación rápida a Excel con un clic. Cálculo de ángulos internos y externos en segmentador. Mejoras en la gestión de capas. Guardado de configuración persistente.
+changelog=v2.0 (2026-01-15): Fusión de YF_Tools y Export to Excel. Interfaz unificada con pestañas. Exportación rápida a Excel con un clic. Cálculo de ángulos internos y externos en segmentador. Mejoras en la gestión de capas. Guardado de configuración persistente.
 
 tags=export,excel,csv,polygon,segment,tools,topografia,topography,vector
 homepage=https://github.com/yurifabian/YF_Tools_Plus
