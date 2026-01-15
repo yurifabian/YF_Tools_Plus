@@ -1,18 +1,25 @@
 [general]
-name=YF Tools Plus
+name=YF_Tools_Plus
 qgisMinimumVersion=3.30
-description=Plugin unificado que combina las funcionalidades de YF_Tools y Export to Excel (Un Clic) en una sola herramienta completa para trabajos topográficos y de georeferenciación.
+description=Plugin de topografía para crear polígonos desde Excel, segmentarlos y exportar a Excel con un clic.
+about=YF Tools Plus es un complemento de topografía que permite crear polígonos rápidamente desde Excel, acortando significativamente el tiempo de elaboración de mapas. Además, permite crear y segmentar el polígono en líneas cortadas por los vértices, obteniendo así medidas perimétricas y de azimut. La herramienta organiza automáticamente la tabla de datos de manera que pueda incluirse directamente en el compositor de mapas, cumpliendo con la estructura que exigen las normas de catastro peruanas. Incluye función de exportación rápida a Excel que se abre automáticamente.
 version=2.0
 author=Yuri Caller
 email=yuricaller@gmail.com
-icon=icon.png
+changelog=v2.0 (2025-01-15): Fusión de YF_Tools y Export to Excel. Interfaz unificada con pestañas. Exportación rápida a Excel con un clic. Cálculo de ángulos internos y externos en segmentador. Mejoras en la gestión de capas. Guardado de configuración persistente.
+
+tags=export,excel,csv,polygon,segment,tools,topografia,topography,vector
+homepage=https://github.com/yurifabian/YF_Tools_Plus
+tracker=https://github.com/yurifabian/YF_Tools_Plus/issues
+repository=https://github.com/yurifabian/YF_Tools_Plus
+
 category=Vector
-homepage=https://github.com/yuricaller/YF_Tools_Plus
-tracker=https://github.com/yuricaller/YF_Tools_Plus/issues
-repository=https://github.com/yuricaller/YF_Tools_Plus
-tags=export, excel, csv, polygon, segment, tools, topografia
-changelog=v2.0 (2025-04-21): Fusión de YF_Tools y Export to Excel. Interfaz unificada con pestañas. Exportación rápida a Excel con un clic. Cálculo de ángulos internos y externos en segmentador. Mejoras en la gestión de capas. Guardado de configuración persistente.
+icon=icon.png
+
+license=GPL-2.0-or-later
+
 [experimental]
-experimental=false
+experimental=False
+
 [deprecated]
-deprecated=false
+deprecated=False

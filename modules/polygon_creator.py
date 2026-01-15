@@ -9,19 +9,26 @@
         copyright            : (C) 2025 by Yuri Caller
         email                : yuricaller@gmail.com
  ***************************************************************************/
+
+/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ ***************************************************************************/
 """
 
 import os
-import csv
 from qgis.core import (
     QgsVectorLayer, QgsField, QgsFeature, QgsGeometry, QgsPointXY, QgsProject,
     QgsSimpleLineSymbolLayer, QgsSingleSymbolRenderer, QgsFillSymbol,
-    QgsPalLayerSettings, QgsTextFormat, QgsTextBufferSettings, 
-    QgsVectorLayerSimpleLabeling, QgsCoordinateReferenceSystem,
-    QgsMessageLog, Qgis
+    QgsPalLayerSettings, QgsTextFormat, QgsTextBufferSettings, QgsVectorLayerSimpleLabeling
 )
 from PyQt5.QtCore import QVariant
 from PyQt5.QtGui import QColor, QFont
+from qgis.core import QgsMessageLog, Qgis
 
 class PolygonCreator:
     """Clase para crear polígonos a partir de archivos CSV"""
@@ -29,38 +36,6 @@ class PolygonCreator:
     def __init__(self):
         """Constructor."""
         pass
-    
-    def get_csv_fields(self, csv_path):
-        """
-        Obtiene los nombres de los campos (columnas) de un archivo CSV
-        
-        :param csv_path: Ruta al archivo CSV
-        :type csv_path: str
-        
-        :returns: Lista de nombres de campos
-        :rtype: list
-        """
-        try:
-            if not os.path.exists(csv_path):
-                QgsMessageLog.logMessage(
-                    f"El archivo CSV no existe: {csv_path}", 
-                    "YF Tools Plus", 
-                    Qgis.Critical
-                )
-                return []
-            
-            with open(csv_path, 'r', encoding='utf-8') as f:
-                reader = csv.reader(f)
-                headers = next(reader)
-                return headers
-                
-        except Exception as e:
-            QgsMessageLog.logMessage(
-                f"Error al leer campos del CSV: {str(e)}", 
-                "YF Tools Plus", 
-                Qgis.Warning
-            )
-            return []
         
     def create_polygon(self, csv_path, field_x, field_y, crs, style_params=None):
         """
@@ -75,8 +50,8 @@ class PolygonCreator:
         :param field_y: Nombre del campo que contiene la coordenada Y
         :type field_y: str
         
-        :param crs: Sistema de referencia de coordenadas (string como 'EPSG:32719')
-        :type crs: str
+        :param crs: Sistema de referencia de coordenadas (ej. QgsCrs)
+        :type crs: QgsCrs
         
         :param style_params: Parámetros de estilo para el polígono
         :type style_params: dict
@@ -85,37 +60,12 @@ class PolygonCreator:
         :rtype: QgsVectorLayer or None
         """
         try:
-            QgsMessageLog.logMessage(
-                f"========== INICIANDO CREACIÓN DE POLÍGONO ==========", 
-                "YF Tools Plus", 
-                Qgis.Info
-            )
-            QgsMessageLog.logMessage(
-                f"Archivo CSV: {csv_path}", 
-                "YF Tools Plus", 
-                Qgis.Info
-            )
-            QgsMessageLog.logMessage(
-                f"Campo X: '{field_x}', Campo Y: '{field_y}'", 
-                "YF Tools Plus", 
-                Qgis.Info
-            )
-            QgsMessageLog.logMessage(
-                f"CRS: {crs}", 
-                "YF Tools Plus", 
-                Qgis.Info
-            )
-            
             # Verificar que el archivo CSV existe
             if not os.path.exists(csv_path):
-                QgsMessageLog.logMessage(
-                    f"El archivo CSV no existe: {csv_path}", 
-                    "YF Tools Plus", 
-                    Qgis.Critical
-                )
+                QgsMessageLog.logMessage(f"El archivo CSV no existe: {csv_path}", "YF Tools Plus", Qgis.Critical)
                 return None
             
-            # Configurar parámetros de estilo predeterminados
+            # Configurar parámetros de estilo predeterminados si no se proporcionan
             if style_params is None:
                 style_params = {
                     'polygon_color': '#ffffff',
@@ -126,101 +76,20 @@ class PolygonCreator:
                     'label_color': '#ff340b'
                 }
             
-            # Verificar campos en el CSV
-            available_fields = self.get_csv_fields(csv_path)
-            QgsMessageLog.logMessage(
-                f"Campos disponibles en CSV: {available_fields}", 
-                "YF Tools Plus", 
-                Qgis.Info
-            )
+            # 1. Cargar la capa de puntos desde el archivo CSV
+            # Nota: El CRS debe ser pasado como WKT o AuthID para la URI, pero el diálogo pasa un objeto QgsCrs.
+            # Usaremos el objeto QgsCrs para la capa de memoria.
+            uri = f"file:///{csv_path}?encoding=UTF-8&delimiter=,&xField={field_x}&yField={field_y}&crs={crs.authid()}"
+            points_layer = QgsVectorLayer(uri, "points_layer", "delimitedtext")
             
-            if field_x not in available_fields:
-                QgsMessageLog.logMessage(
-                    f"El campo X '{field_x}' no existe en el CSV. Campos disponibles: {available_fields}", 
-                    "YF Tools Plus", 
-                    Qgis.Critical
-                )
-                return None
-                
-            if field_y not in available_fields:
-                QgsMessageLog.logMessage(
-                    f"El campo Y '{field_y}' no existe en el CSV. Campos disponibles: {available_fields}", 
-                    "YF Tools Plus", 
-                    Qgis.Critical
-                )
+            # Verificar si la capa se cargó correctamente
+            if not points_layer.isValid():
+                QgsMessageLog.logMessage("Error al cargar la capa de puntos. Verifica la ruta y el formato del archivo.", "YF Tools Plus", Qgis.Critical)
                 return None
             
-            # Crear objeto CRS
-            if isinstance(crs, str):
-                crs_obj = QgsCoordinateReferenceSystem(crs)
-            else:
-                crs_obj = crs
-            
-            if not crs_obj.isValid():
-                QgsMessageLog.logMessage(
-                    f"El CRS '{crs}' no es válido", 
-                    "YF Tools Plus", 
-                    Qgis.Critical
-                )
-                return None
-            
-            # Leer puntos directamente del CSV
-            points = []
-            with open(csv_path, 'r', encoding='utf-8') as f:
-                reader = csv.DictReader(f)
-                row_count = 0
-                for row in reader:
-                    row_count += 1
-                    try:
-                        x = float(row[field_x])
-                        y = float(row[field_y])
-                        points.append(QgsPointXY(x, y))
-                        QgsMessageLog.logMessage(
-                            f"Punto {row_count}: X={x}, Y={y}", 
-                            "YF Tools Plus", 
-                            Qgis.Info
-                        )
-                    except (ValueError, KeyError) as e:
-                        QgsMessageLog.logMessage(
-                            f"Error al leer fila {row_count}: {str(e)}", 
-                            "YF Tools Plus", 
-                            Qgis.Warning
-                        )
-                        continue
-            
-            # Verificar que hay suficientes puntos
-            if len(points) < 3:
-                QgsMessageLog.logMessage(
-                    f"Se necesitan al menos 3 puntos para crear un polígono. Solo se encontraron {len(points)} puntos válidos.", 
-                    "YF Tools Plus", 
-                    Qgis.Critical
-                )
-                return None
-            
-            QgsMessageLog.logMessage(
-                f"Se cargaron {len(points)} puntos correctamente", 
-                "YF Tools Plus", 
-                Qgis.Success
-            )
-            
-            # Crear capa de polígonos en memoria
-            polygon_layer = QgsVectorLayer(
-                f"Polygon?crs={crs_obj.authid()}", 
-                "Polígono", 
-                "memory"
-            )
-            
-            if not polygon_layer.isValid():
-                QgsMessageLog.logMessage(
-                    "Error al crear la capa de polígonos en memoria", 
-                    "YF Tools Plus", 
-                    Qgis.Critical
-                )
-                return None
-            
+            # 2. Crear una capa de polígonos
+            polygon_layer = QgsVectorLayer(f"Polygon?crs={crs.toWkt()}", "Polígono", "memory")
             provider = polygon_layer.dataProvider()
-            
-            # Añadir campos
             provider.addAttributes([
                 QgsField("ID", QVariant.Int),
                 QgsField("AREA", QVariant.Double),
@@ -228,65 +97,60 @@ class PolygonCreator:
             ])
             polygon_layer.updateFields()
             
-            # Crear geometría del polígono
-            polygon = QgsGeometry.fromPolygonXY([points])
+            # 3. Crear un polígono a partir de las coordenadas
+            points = []
+            for feature in points_layer.getFeatures():
+                # Asumiendo que los campos son numéricos y existen
+                try:
+                    east = feature[field_x]
+                    north = feature[field_y]
+                    points.append(QgsPointXY(east, north))
+                except Exception as e:
+                    QgsMessageLog.logMessage(f"Error al leer coordenadas de la fila {feature.id()}: {str(e)}", "YF Tools Plus", Qgis.Warning)
+                    continue
             
-            if polygon.isEmpty():
-                QgsMessageLog.logMessage(
-                    "La geometría del polígono está vacía", 
-                    "YF Tools Plus", 
-                    Qgis.Critical
-                )
+            # Verificar que hay suficientes puntos para crear un polígono
+            if len(points) < 3:
+                QgsMessageLog.logMessage("Se necesitan al menos 3 puntos para crear un polígono.", "YF Tools Plus", Qgis.Critical)
                 return None
             
-            # Crear feature
-            feature = QgsFeature(polygon_layer.fields())
+            # Crear la geometría del polígono
+            polygon = QgsGeometry.fromPolygonXY([points])
+            feature = QgsFeature()
             feature.setGeometry(polygon)
             
-            # Calcular área y perímetro
+            # 4. Calcular área y perímetro
+            # QGIS usa el CRS de la capa para los cálculos.
+            # Se asume que el CRS es proyectado (UTM) para que los cálculos sean en metros/hectáreas.
             area = polygon.area() / 10000  # Convertir a hectáreas
             perimeter = polygon.length()  # Perímetro en metros
             
-            QgsMessageLog.logMessage(
-                f"Polígono creado - Área: {area:.4f} Ha, Perímetro: {perimeter:.2f} m", 
-                "YF Tools Plus", 
-                Qgis.Success
-            )
-            
-            # Añadir atributos
+            # 5. Añadir atributos
             feature.setAttributes([1, round(area, 4), round(perimeter, 2)])
-            
-            # Añadir feature a la capa
-            provider.addFeatures([feature])
+            provider.addFeature(feature)
             polygon_layer.updateExtents()
             
-            # Aplicar simbología
+            # 6. Añadir la capa al proyecto
+            QgsProject.instance().addMapLayer(polygon_layer)
+            
+            # 7. Aplicar la simbología
             symbol = QgsFillSymbol.createSimple({
                 'color': style_params.get('polygon_color', '#ffffff'),
                 'color_border': style_params.get('border_color', '#ff340b'),
-                'width_border': style_params.get('border_width', '0.26'),
-                'style': 'solid',
-                'style_border': 'solid'
+                'width_border': style_params.get('border_width', '0.26')
             })
             polygon_layer.renderer().setSymbol(symbol)
+            polygon_layer.triggerRepaint()
             
-            # Aplicar etiquetas
+            # 8. Aplicar etiquetas
             label_settings = QgsPalLayerSettings()
-            label_settings.fieldName = (
-                "'PARCELA GEOREFERENCIADA' || '\\n' || "
-                "'AREA : ' || round(\"AREA\", 4) || ' Ha.' || '\\n' || "
-                "'PERIMETRO : ' || round(\"PERIMETRO\", 2) || ' m.'"
-            )
+            label_settings.fieldName = "'PARCELA GEOREFERENCIADA' || '\n' || 'AREA : ' || Round(\"AREA\", 4) || ' Ha.' || '\n' || 'PERIMETRO : ' || Round(\"PERIMETRO\", 2) || ' m.'"
             label_settings.isExpression = True
             
             text_format = QgsTextFormat()
             text_format.setColor(QColor(style_params.get('label_color', '#ff340b')))
             text_format.setSize(float(style_params.get('label_size', '9')))
-            text_format.setFont(QFont(
-                style_params.get('label_font', 'Arial'), 
-                int(style_params.get('label_size', '9')), 
-                QFont.Bold
-            ))
+            text_format.setFont(QFont(style_params.get('label_font', 'Arial'), int(style_params.get('label_size', '9')), QFont.Bold))
             
             buffer_settings = QgsTextBufferSettings()
             buffer_settings.setEnabled(True)
@@ -295,38 +159,15 @@ class PolygonCreator:
             text_format.setBuffer(buffer_settings)
             
             label_settings.setFormat(text_format)
-            
-            # Compatibilidad con QGIS 3.x para placement
-            try:
-                # Para QGIS 3.16+
-                label_settings.placement = Qgis.LabelPlacement.OverPoint
-            except (AttributeError):
-                # Para versiones anteriores de QGIS 3.x
-                try:
-                    label_settings.placement = QgsPalLayerSettings.Placement.OverPoint
-                except:
-                    # Fallback para versiones muy antiguas
-                    label_settings.placement = 0  # OverPoint
-            
+            label_settings.placement = QgsPalLayerSettings.Placement.OverPoint
             label_settings.centroidWhole = True
             
             polygon_layer.setLabeling(QgsVectorLayerSimpleLabeling(label_settings))
             polygon_layer.setLabelsEnabled(True)
-            
-            # Añadir al proyecto
-            QgsProject.instance().addMapLayer(polygon_layer)
             polygon_layer.triggerRepaint()
-            
-            QgsMessageLog.logMessage(
-                "✓ Polígono añadido al proyecto exitosamente", 
-                "YF Tools Plus", 
-                Qgis.Success
-            )
             
             return polygon_layer
             
         except Exception as e:
-            import traceback
-            error_msg = f"Error al crear polígono: {str(e)}\n{traceback.format_exc()}"
-            QgsMessageLog.logMessage(error_msg, "YF Tools Plus", Qgis.Critical)
+            QgsMessageLog.logMessage(f"Error al crear polígono: {str(e)}", "YF Tools Plus", Qgis.Critical)
             return None
