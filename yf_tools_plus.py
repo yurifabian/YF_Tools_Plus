@@ -104,7 +104,7 @@ class YF_Tools_Plus(QObject):
     def initGui(self):
         """Crea los elementos de la interfaz de usuario."""
         
-        # Acción única para abrir el diálogo principal
+        # 1. Acción para abrir el diálogo principal
         icon_path = os.path.join(self.plugin_dir, 'icon.png')
         self.action_main_dialog = self.add_action(
             icon_path,
@@ -114,14 +114,56 @@ class YF_Tools_Plus(QObject):
             status_tip=self.tr(u'Herramientas para Excel, Polígonos y Segmentación'),
             add_to_toolbar=True)
 
+        # 2. Acción para exportación rápida a Excel (Un Clic)
+        icon_export_path = os.path.join(self.plugin_dir, 'icon_export.png')
+        self.action_quick_export = self.add_action(
+            icon_export_path,
+            text=self.tr(u'Exportar a Excel (Un Clic)'),
+            callback=self.run_quick_export,
+            parent=self.iface.mainWindow(),
+            status_tip=self.tr(u'Exporta la capa activa a Excel inmediatamente'),
+            add_to_toolbar=True)
+
     def unload(self):
         """Elimina los elementos de la interfaz de usuario."""
         for action in self.actions:
             self.iface.removeToolBarIcon(action)
             self.iface.removePluginMenu(self.tr(u'&YF Tools Plus'), action)
             
-        del self.toolbar
+        # Eliminar la barra de herramientas
+        if self.toolbar:
+            self.iface.mainWindow().removeToolBar(self.toolbar)
+            del self.toolbar
 
     def run(self):
         """Muestra el diálogo principal del plugin."""
         self.dialog.show()
+
+    def run_quick_export(self):
+        """Ejecuta la exportación rápida de la capa activa."""
+        layer = self.iface.activeLayer()
+        
+        if not layer or not isinstance(layer, QgsVectorLayer):
+            self.iface.messageBar().pushMessage(
+                self.tr("Error"),
+                self.tr("Por favor, seleccione una capa vectorial activa en el panel de capas."),
+                level=Qgis.Warning,
+                duration=3
+            )
+            return
+
+        try:
+            self.excel_exporter.quick_export(layer)
+            self.iface.messageBar().pushMessage(
+                self.tr("Éxito"),
+                self.tr(f"Capa '{layer.name()}' exportada correctamente."),
+                level=Qgis.Success,
+                duration=3
+            )
+        except Exception as e:
+            self.iface.messageBar().pushMessage(
+                self.tr("Error"),
+                self.tr(f"No se pudo exportar la capa: {str(e)}"),
+                level=Qgis.Critical,
+                duration=5
+            )
