@@ -1,5 +1,5 @@
 [general]
-name=YF_Tools_Plus
+name=YF Tools Plus
 qgisMinimumVersion=3.30
 description=Plugin de topografía para crear polígonos desde Excel, segmentarlos y exportar a Excel con un clic.
 about=YF Tools Plus es un complemento de topografía que permite crear polígonos rápidamente desde Excel, acortando significativamente el tiempo de elaboración de mapas. Además, permite crear y segmentar el polígono en líneas cortadas por los vértices, obteniendo así medidas perimétricas y de azimut. La herramienta organiza automáticamente la tabla de datos de manera que pueda incluirse directamente en el compositor de mapas, cumpliendo con la estructura que exigen las normas de catastro peruanas. Incluye función de exportación rápida a Excel que se abre automáticamente.

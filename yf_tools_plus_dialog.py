@@ -57,6 +57,9 @@ class YF_Tools_PlusDialog(QDialog, FORM_CLASS):
         self.pushButton_save_config.clicked.connect(self.save_config)
         self.pushButton_refresh_layers.clicked.connect(self.refresh_layer_comboboxes)
         
+        # Conectar cambio de archivo CSV para actualizar campos
+        self.mFileWidget_csv_polygon.fileChanged.connect(self.update_csv_fields)
+        
         # Configuración inicial de widgets
         try:
             # Configurar CRS selector
@@ -79,6 +82,90 @@ class YF_Tools_PlusDialog(QDialog, FORM_CLASS):
         """Obtiene la cadena traducida de QGIS."""
         return QCoreApplication.translate('YF_Tools_PlusDialog', message)
 
+    def update_csv_fields(self, filepath):
+        """
+        Actualiza los ComboBox de campos X e Y cuando se selecciona un archivo CSV
+        
+        :param filepath: Ruta al archivo CSV seleccionado
+        :type filepath: str
+        """
+        try:
+            if not filepath or not os.path.exists(filepath):
+                return
+            
+            QgsMessageLog.logMessage(
+                f"Detectando campos en: {filepath}", 
+                "YF Tools Plus", 
+                Qgis.Info
+            )
+            
+            # Obtener campos del CSV
+            fields = self.polygon_creator.get_csv_fields(filepath)
+            
+            if not fields:
+                QgsMessageLog.logMessage(
+                    "No se pudieron detectar campos en el CSV", 
+                    "YF Tools Plus", 
+                    Qgis.Warning
+                )
+                return
+            
+            # Guardar el texto actual (si existe)
+            current_x = self.comboBox_x_field.currentText()
+            current_y = self.comboBox_y_field.currentText()
+            
+            # Limpiar y llenar los comboboxes
+            self.comboBox_x_field.clear()
+            self.comboBox_y_field.clear()
+            
+            self.comboBox_x_field.addItems(fields)
+            self.comboBox_y_field.addItems(fields)
+            
+            # Intentar restaurar valores anteriores o detectar automáticamente
+            x_set = False
+            y_set = False
+            
+            # Primero intentar restaurar valores anteriores
+            if current_x:
+                index = self.comboBox_x_field.findText(current_x)
+                if index >= 0:
+                    self.comboBox_x_field.setCurrentIndex(index)
+                    x_set = True
+            
+            if current_y:
+                index = self.comboBox_y_field.findText(current_y)
+                if index >= 0:
+                    self.comboBox_y_field.setCurrentIndex(index)
+                    y_set = True
+            
+            # Si no se restauraron, intentar detección automática
+            if not x_set:
+                for i, field in enumerate(fields):
+                    field_upper = field.upper()
+                    if any(keyword in field_upper for keyword in ['X', 'ESTE', 'EAST', 'LON', 'EASTING', 'E']):
+                        self.comboBox_x_field.setCurrentIndex(i)
+                        break
+            
+            if not y_set:
+                for i, field in enumerate(fields):
+                    field_upper = field.upper()
+                    if any(keyword in field_upper for keyword in ['Y', 'NORTE', 'NORTH', 'LAT', 'NORTHING', 'N']):
+                        self.comboBox_y_field.setCurrentIndex(i)
+                        break
+            
+            QgsMessageLog.logMessage(
+                f"✓ Campos detectados: {', '.join(fields)}", 
+                "YF Tools Plus", 
+                Qgis.Success
+            )
+            
+        except Exception as e:
+            QgsMessageLog.logMessage(
+                f"Error al actualizar campos: {str(e)}", 
+                "YF Tools Plus", 
+                Qgis.Warning
+            )
+
     def refresh_layer_comboboxes(self):
         """Fuerza la actualización de los QgsMapLayerComboBox."""
         try:
@@ -86,10 +173,12 @@ class YF_Tools_PlusDialog(QDialog, FORM_CLASS):
             self.mLayerComboBox_polygon.setCurrentIndex(0)
             self.mLayerComboBox_export.setLayer(None)
             self.mLayerComboBox_export.setCurrentIndex(0)
-            QgsMessageLog.logMessage(
-                self.tr("Listas de capas actualizadas."), 
-                "YF Tools Plus", 
-                Qgis.Info
+            
+            self.iface.messageBar().pushMessage(
+                "YF Tools Plus",
+                "✓ Listas de capas actualizadas",
+                level=Qgis.Success,
+                duration=2
             )
         except Exception as e:
             QgsMessageLog.logMessage(
@@ -107,28 +196,37 @@ class YF_Tools_PlusDialog(QDialog, FORM_CLASS):
             if not input_file or not output_file:
                 QMessageBox.warning(
                     self, 
-                    self.tr("Advertencia"), 
-                    self.tr("Debe seleccionar un archivo de entrada y uno de salida.")
+                    "Advertencia", 
+                    "Debe seleccionar un archivo de entrada y uno de salida."
                 )
                 return
             
             QgsMessageLog.logMessage(
-                self.tr("Iniciando conversión de Excel a CSV..."), 
+                "Iniciando conversión de Excel a CSV...", 
                 "YF Tools Plus", 
                 Qgis.Info
             )
             
-            self.excel_to_csv.convert(input_file, output_file)
-            QMessageBox.information(
-                self, 
-                self.tr("Éxito"), 
-                self.tr(f"Archivo convertido exitosamente a:\n{output_file}")
-            )
+            result = self.excel_to_csv.convert(input_file, output_file)
+            
+            if result:
+                QMessageBox.information(
+                    self, 
+                    "Éxito", 
+                    f"✓ Archivo convertido exitosamente a:\n{output_file}"
+                )
+            else:
+                QMessageBox.warning(
+                    self,
+                    "Error",
+                    "No se pudo convertir el archivo. Revise el registro de mensajes."
+                )
+                
         except Exception as e:
             QMessageBox.critical(
                 self, 
-                self.tr("Error"), 
-                self.tr(f"Error al convertir archivo:\n{str(e)}")
+                "Error", 
+                f"Error al convertir archivo:\n{str(e)}"
             )
             QgsMessageLog.logMessage(
                 f"Error en ExcelToCsv: {str(e)}", 
@@ -140,20 +238,28 @@ class YF_Tools_PlusDialog(QDialog, FORM_CLASS):
         """Ejecuta la creación de polígonos desde CSV."""
         try:
             csv_file = self.mFileWidget_csv_polygon.filePath()
-            x_field = self.lineEdit_x_field.text()
-            y_field = self.lineEdit_y_field.text()
+            x_field = self.comboBox_x_field.currentText().strip()
+            y_field = self.comboBox_y_field.currentText().strip()
             crs = self.mCrsSelector_polygon.crs()
             
-            if not csv_file or not x_field or not y_field:
+            if not csv_file:
                 QMessageBox.warning(
                     self, 
-                    self.tr("Advertencia"), 
-                    self.tr("Debe seleccionar un archivo CSV y especificar los campos X e Y.")
+                    "Advertencia", 
+                    "Debe seleccionar un archivo CSV."
+                )
+                return
+            
+            if not x_field or not y_field:
+                QMessageBox.warning(
+                    self, 
+                    "Advertencia", 
+                    "Debe especificar los campos X e Y."
                 )
                 return
             
             QgsMessageLog.logMessage(
-                self.tr("Iniciando creación de polígono..."), 
+                f"Creando polígono con campos X='{x_field}', Y='{y_field}'", 
                 "YF Tools Plus", 
                 Qgis.Info
             )
@@ -168,7 +274,7 @@ class YF_Tools_PlusDialog(QDialog, FORM_CLASS):
                 'label_color': '#ff340b'
             }
             
-            self.polygon_creator.create_polygon(
+            result = self.polygon_creator.create_polygon(
                 csv_file, 
                 x_field, 
                 y_field, 
@@ -176,21 +282,23 @@ class YF_Tools_PlusDialog(QDialog, FORM_CLASS):
                 style_params
             )
             
-            QMessageBox.information(
-                self, 
-                self.tr("Éxito"), 
-                self.tr("Polígono creado exitosamente.")
-            )
-            
-            # Actualizar lista de capas
-            self.refresh_layer_comboboxes()
+            if result:
+                QMessageBox.information(
+                    self, 
+                    "Éxito", 
+                    "✓ Polígono creado exitosamente"
+                )
+                self.refresh_layer_comboboxes()
+            else:
+                QMessageBox.warning(
+                    self, 
+                    "Advertencia", 
+                    "No se pudo crear el polígono.\n\nRevise el Panel de Registro de Mensajes:\nVer → Paneles → Registro de mensajes → YF Tools Plus"
+                )
             
         except Exception as e:
-            QMessageBox.critical(
-                self, 
-                self.tr("Error"), 
-                self.tr(f"Error al crear polígono:\n{str(e)}")
-            )
+            error_msg = f"Error al crear polígono:\n{str(e)}"
+            QMessageBox.critical(self, "Error", error_msg)
             QgsMessageLog.logMessage(
                 f"Error en PolygonCreator: {str(e)}", 
                 "YF Tools Plus", 
@@ -205,13 +313,13 @@ class YF_Tools_PlusDialog(QDialog, FORM_CLASS):
             if not layer or not layer.isValid():
                 QMessageBox.warning(
                     self, 
-                    self.tr("Advertencia"), 
-                    self.tr("Debe seleccionar una capa de polígono válida.")
+                    "Advertencia", 
+                    "Debe seleccionar una capa de polígono válida."
                 )
                 return
             
             QgsMessageLog.logMessage(
-                self.tr(f"Iniciando segmentación de capa: {layer.name()}..."), 
+                f"Segmentando capa: {layer.name()}", 
                 "YF Tools Plus", 
                 Qgis.Info
             )
@@ -221,21 +329,21 @@ class YF_Tools_PlusDialog(QDialog, FORM_CLASS):
             if result:
                 QMessageBox.information(
                     self, 
-                    self.tr("Éxito"), 
-                    self.tr("Polígono segmentado exitosamente.\n\nCapas 'Segmentos' y 'Vertices' añadidas al proyecto.")
+                    "Éxito", 
+                    "✓ Polígono segmentado exitosamente\n\nCapas creadas:\n• Segmentos\n• Vertices"
                 )
             else:
                 QMessageBox.warning(
                     self, 
-                    self.tr("Advertencia"), 
-                    self.tr("La segmentación no se completó correctamente.")
+                    "Advertencia", 
+                    "La segmentación no se completó correctamente."
                 )
                 
         except Exception as e:
             QMessageBox.critical(
                 self, 
-                self.tr("Error"), 
-                self.tr(f"Error al segmentar polígono:\n{str(e)}")
+                "Error", 
+                f"Error al segmentar polígono:\n{str(e)}"
             )
             QgsMessageLog.logMessage(
                 f"Error en Segmentator: {str(e)}", 
@@ -253,37 +361,35 @@ class YF_Tools_PlusDialog(QDialog, FORM_CLASS):
             if not layer or not layer.isValid():
                 QMessageBox.warning(
                     self, 
-                    self.tr("Advertencia"), 
-                    self.tr("Debe seleccionar una capa vectorial válida para exportar.")
+                    "Advertencia", 
+                    "Debe seleccionar una capa vectorial válida para exportar."
                 )
                 return
             
-            # Si no hay ruta de salida, usar por defecto
             if not output_path:
                 layer_name = layer.name().replace(" ", "_")
                 output_dir = os.path.expanduser("~")
                 output_path = os.path.join(output_dir, f"{layer_name}_atributos.xlsx")
             
             QgsMessageLog.logMessage(
-                self.tr(f"Iniciando exportación de capa: {layer.name()} a Excel..."), 
+                f"Exportando capa: {layer.name()}", 
                 "YF Tools Plus", 
                 Qgis.Info
             )
             
             self.excel_exporter.export_to_excel(layer, output_path, open_file)
             
+            msg = f"✓ Exportación completada:\n{output_path}"
             if open_file:
-                msg = self.tr(f"Exportación completada y archivo abierto:\n{output_path}")
-            else:
-                msg = self.tr(f"Exportación completada:\n{output_path}")
+                msg += "\n\n(Archivo abierto automáticamente)"
             
-            QMessageBox.information(self, self.tr("Éxito"), msg)
+            QMessageBox.information(self, "Éxito", msg)
             
         except Exception as e:
             QMessageBox.critical(
                 self, 
-                self.tr("Error"), 
-                self.tr(f"Error al exportar a Excel:\n{str(e)}")
+                "Error", 
+                f"Error al exportar a Excel:\n{str(e)}"
             )
             QgsMessageLog.logMessage(
                 f"Error en ExcelExporter: {str(e)}", 
@@ -292,13 +398,13 @@ class YF_Tools_PlusDialog(QDialog, FORM_CLASS):
             )
 
     def save_config(self):
-        """Guarda la configuración actual de los widgets en un archivo JSON."""
+        """Guarda la configuración actual."""
         config = {
             "excel_input_path": self.mFileWidget_excel_input.filePath(),
             "csv_output_path": self.mFileWidget_csv_output.filePath(),
             "csv_polygon_path": self.mFileWidget_csv_polygon.filePath(),
-            "x_field": self.lineEdit_x_field.text(),
-            "y_field": self.lineEdit_y_field.text(),
+            "x_field": self.comboBox_x_field.currentText(),
+            "y_field": self.comboBox_y_field.currentText(),
             "crs_authid": self.mCrsSelector_polygon.crs().authid(),
             "excel_output_path": self.mFileWidget_excel_output.filePath(),
             "auto_open": self.checkBox_auto_open.isChecked(),
@@ -308,15 +414,12 @@ class YF_Tools_PlusDialog(QDialog, FORM_CLASS):
         try:
             with open(self.config_path, 'w', encoding='utf-8') as f:
                 json.dump(config, f, indent=4, ensure_ascii=False)
-            QgsMessageLog.logMessage(
-                self.tr("Configuración guardada exitosamente."), 
-                "YF Tools Plus", 
-                Qgis.Success
-            )
-            QMessageBox.information(
-                self, 
-                self.tr("Éxito"), 
-                self.tr("Configuración guardada.")
+            
+            self.iface.messageBar().pushMessage(
+                "YF Tools Plus",
+                "✓ Configuración guardada",
+                level=Qgis.Success,
+                duration=2
             )
         except Exception as e:
             QgsMessageLog.logMessage(
@@ -324,19 +427,10 @@ class YF_Tools_PlusDialog(QDialog, FORM_CLASS):
                 "YF Tools Plus", 
                 Qgis.Critical
             )
-            QMessageBox.critical(
-                self, 
-                self.tr("Error"), 
-                self.tr(f"Error al guardar configuración:\n{str(e)}")
-            )
 
     def load_config(self):
-        """Carga la configuración guardada desde un archivo JSON."""
+        """Carga la configuración guardada."""
         if not os.path.exists(self.config_path):
-            # Establecer valores por defecto
-            self.lineEdit_x_field.setText("ESTE")
-            self.lineEdit_y_field.setText("NORTE")
-            self.checkBox_auto_open.setChecked(True)
             return
         
         try:
@@ -345,9 +439,19 @@ class YF_Tools_PlusDialog(QDialog, FORM_CLASS):
             
             self.mFileWidget_excel_input.setFilePath(config.get("excel_input_path", ""))
             self.mFileWidget_csv_output.setFilePath(config.get("csv_output_path", ""))
-            self.mFileWidget_csv_polygon.setFilePath(config.get("csv_polygon_path", ""))
-            self.lineEdit_x_field.setText(config.get("x_field", "ESTE"))
-            self.lineEdit_y_field.setText(config.get("y_field", "NORTE"))
+            
+            csv_path = config.get("csv_polygon_path", "")
+            if csv_path:
+                self.mFileWidget_csv_polygon.setFilePath(csv_path)
+                if os.path.exists(csv_path):
+                    self.update_csv_fields(csv_path)
+            
+            # Establecer valores de campos
+            x_field = config.get("x_field", "ESTE")
+            y_field = config.get("y_field", "NORTE")
+            
+            self.comboBox_x_field.setEditText(x_field)
+            self.comboBox_y_field.setEditText(y_field)
             
             crs_authid = config.get("crs_authid")
             if crs_authid:
@@ -359,18 +463,9 @@ class YF_Tools_PlusDialog(QDialog, FORM_CLASS):
             self.checkBox_auto_open.setChecked(config.get("auto_open", True))
             self.tabWidget.setCurrentIndex(config.get("current_tab", 0))
             
-            QgsMessageLog.logMessage(
-                self.tr("Configuración cargada exitosamente."), 
-                "YF Tools Plus", 
-                Qgis.Info
-            )
         except Exception as e:
             QgsMessageLog.logMessage(
                 f"Error al cargar configuración: {str(e)}", 
                 "YF Tools Plus", 
                 Qgis.Warning
             )
-            # Establecer valores por defecto en caso de error
-            self.lineEdit_x_field.setText("ESTE")
-            self.lineEdit_y_field.setText("NORTE")
-            self.checkBox_auto_open.setChecked(True)

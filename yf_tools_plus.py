@@ -39,10 +39,8 @@ class YF_Tools_Plus(QObject):
         self.actions = []
         self.menu = self.tr(u"&YF Tools Plus")
 
-        # Cargar traducciones - LÍNEA CORREGIDA
-        locale_value = QSettings().value('locale/userLocale')
-        locale = str(locale_value)[0:2] if locale_value else 'en'
-        
+        # Cargar traducciones
+        locale = QSettings().value('locale/userLocale')[0:2]
         locale_path = os.path.join(
             self.plugin_dir,
             'i18n',
