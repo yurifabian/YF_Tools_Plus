@@ -3,7 +3,9 @@
 [![QGIS](https://img.shields.io/badge/QGIS-3.30+-green.svg)](https://qgis.org/)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
-**YF Tools Plus** es un plugin unificado para QGIS que combina las funcionalidades de *YF_Tools* y *Export to Excel (Un Clic)* en una sola herramienta integral diseñada para optimizar flujos de trabajo topográficos y de georeferenciación.
+**YF Tools Plus** es un plugin de topografía que permite crear polígonos rápidamente desde Excel, acortando significativamente el tiempo de elaboración de mapas. Adicionalmente, permite crear y segmentar el polígono en líneas cortadas por los vértices, obteniendo así medidas perimétricas y de azimut.
+La herramienta organiza automáticamente la tabla de datos de manera que pueda incluirse directamente en el compositor de mapas, cumpliendo con la estructura que exigen las normas de catastro peruanas. Asimismo, se ha incluido una función que permite exportar las tablas a Excel, el cual se abre automáticamente con un clic, sin necesidad de generar archivos temporales.
+YF Tools y Export to Excel (Un Clic) se integran en una sola herramienta integral diseñada para optimizar flujos de trabajo topográficos y de georeferenciación.
 
 ---
 
